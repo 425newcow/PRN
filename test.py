@@ -1,39 +1,62 @@
-import os,time
-from options.test_options import TestOptions
-from dataloader.data_loader import dataloader
-from model import create_model
-from itertools import islice
-from util.visualizer import save_images
-from util import html
+import sys
+from subprocess import call
+import os
+import shutil
+
+os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
 
-if __name__=='__main__':
-    opt = TestOptions().parse()       # get test options
-    dataset = dataloader(opt)       # create a dataset
-    dataset_size = len(dataset) * opt.batch_size
-    print('testing images = %d' % dataset_size)
-    model = create_model(opt)       # create a model
-    # create a website
-    opt.epoch = '%d' % opt.which_iter if opt.which_iter > 0 else opt.epoch
-    web_dir = os.path.join(opt.results_dir, opt.name, '{}_{}'.format(opt.phase, opt.epoch))  # define the website directory
-    print('creating web directory', web_dir)
-    opt.save_dir = web_dir
-    webpage = html.HTML(web_dir, 'Experiment = %s, Phase = %s, Epoch = %s' % (opt.name, opt.phase, opt.epoch))
-    opt.how_many = dataset_size if opt.how_many == float("inf") else opt.how_many
+def run_cmd(command):
+    try:
+        call(command, shell=True)
+    except KeyboardInterrupt:
+        print("Process interrupted")
+        sys.exit(1)
 
-    iter_data_time = time.time()
-    for i, data in enumerate(islice(dataset, opt.how_many)):
-        if i == 0:
-            model.setup(opt)
-            model.parallelize()
-            model.eval()
-        model.set_input(data)
-        model.test()
-        visuals = model.get_current_visuals()
-        img_path = model.get_image_paths()
-        save_images(webpage, visuals, img_path, width=opt.display_winsize)
-        if i % 5 == 0:
-            print('processing (%04d)-th image... %s' % (i, img_path))
-    total_time = time.time() - iter_data_time
-    print('the total evaluation time %f' % (total_time))
-    webpage.save()
+
+if __name__ == '__main__':
+
+    img=os.listdir('testimg')
+    mask=os.listdir('mask')
+    img=img[0]
+    mask=mask[0]
+
+    # Stage1: brightness map generation
+    os.chdir("brightness")
+    stage_1_command="python run.py --data_root ./testimg/1.png --mask_root ./mask/1.png --model_path checkpoint/brightness.pth --test --mask_mode 0"
+    run_cmd(stage_1_command)
+    print("Finish the Stage 1 - Brightness map has been completed, please check the folder result1")
+
+    ### Stage2: Grayscale map generation
+    os.chdir("../sketch")
+    # stage_2_command = "python run.py --data_root ./testimg --mask_root ./mask --model_path checkpoint/g_940000.pth --test --mask_mode 0"
+    stage_2_command = "python run.py --data_root ./testimg/1.png --mask_root ./mask/1.png --model_path checkpoint/g_940000.pth --test --mask_mode 0"
+    run_cmd(stage_2_command)
+    print("Finish the Stage 2 - Sketch map has been completed, please check the folder result2")
+    #
+    ### Stage3: color restoration
+    os.chdir("../PIAFusion_pytorch-masterGPU3")
+    shutil.copy("../mask/"+mask,"../colorrestoredata/originalmask/")
+    shutil.copy("../result1/results/img_1.png", "../colorrestoredata/bright/1.png")
+    shutil.copy("../result2/results/img_1.png", "../colorrestoredata/cartoonresult/1.png")
+    shutil.copy("../testimg/"+img, "../colorrestoredata/originalimage/1.png")
+
+    stage_3_command = "python test_fusion_model.py --dataset_path ../colorrestoredata --save_path ../finalresult --fusion_pretrained pretrained/fusion_model_epoch_9.pth"
+    run_cmd(stage_3_command)
+    print("Finish the Stage 3 - All steps have been completed, please check the folder finalresult")
+
+
+
+
+
+    ### Stage3: color restoration
+    # os.chdir("../rgb_restore")
+    #
+    # stage_3_command = "python main.py  --img_path ../testimg/"+img+" --gray_path ../result1/results/img_1.png --color_path ../result2/results/img_1.png --mask_path ../mask/"+mask
+    # run_cmd(stage_3_command)
+    # print("Finish the Stage 3 - All steps have been completed, please check the folder resultfinal")
+
+
+
+
+
