@@ -2,16 +2,23 @@
 # PRN: Progressive Reasoning Network and Its Image Completion Applications
 
 ## Paper
-
-# DDRF
+Ancient murals hold significant historical, cultural, scientific, and artistic values, but many suffer from issues such as pigment shedding or missing parts. As a potential solution, deep learning-based inpainting has achieved impressive results on natural images, but it has proven unsatisfactory in repairing images of damaged murals due to data shift and low modeling efficiency. In this paper, we propose a novel progressive reasoning network for image completion of ancient murals, taking into account the mural painting process. The proposed network comprises a luminance reasoning module, a sketch reasoning module, and a color fusion module. Both the first two modules are built on the double-codec framework to infer the luminance and sketch information of missing areas, respectively. The final module introduces a paired-associate learning framework for recovering color images. This network first uses two parallel complementary paths to estimate the respective luminance and sketch maps of a damaged image, and then combines them to synthesize the complete color image. Experimental results demonstrate that the proposed network recovers clearer structures and more realistic colors, generally outperforming current state-of-the-art methods in repairing damaged images, both quantitatively and qualitatively.   
+### Paper Download:   
 
 ## Requirements
 Python==3.9
 
 Pytorch==1.11.0+cu113
 
-## Image inpainting using existing models
 
+
+## pre_trained model
+For each pretrained model:      
+1 Download the brightness model to ./brightness/checkpoint.   
+2 Download the sketch model to ./sketch/checkpoint.   
+3 Download the sketch model to ./PIAFusion_pytorch-masterGPU3/pretrained.   
+
+## Image inpainting using existing models
 To complete mural Image Inpainting, place the images to be repaired into the folder **./testimg**, place the mask into the folder **./mask**, (we recommend naming both "1.jpg") use
 ```
 python test.py
