@@ -50,7 +50,7 @@ where **brightresult** contains the outputs of brightness reasoning module, **ca
 ## Citation
 ```
 @article{PengWZ23,
-title = {C3N: Content-constrained convolutional network for mural image completion},
+title = {PRN: Progressive Reasoning Network and Its Image Completion Applications},
 author = {Xianlin Peng, Huayu Zhao, Xiaoyu Wang, Yongqin Zhang, Zhan Li, Qunxi Zhang, Jun Wang, Jinye Peng, Haida Liang},
 journal = {Neural Computing and Applications},
 volume = {35},
