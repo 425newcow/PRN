@@ -11,13 +11,6 @@ Python==3.9
 Pytorch==1.11.0+cu113
 
 
-
-## pre_trained model
-For each pretrained model:      
-1 Download the brightness model to ./brightness/checkpoint.   
-2 Download the sketch model to ./sketch/checkpoint.   
-3 Download the sketch model to ./PIAFusion_pytorch-masterGPU3/pretrained.   
-
 ## Image inpainting using existing models
 To complete mural Image Inpainting, place the images to be repaired into the folder **./testimg**, place the mask into the folder **./mask**, (we recommend naming both "1.jpg") use
 ```
@@ -47,15 +40,12 @@ The directory in the **msrs_train** folder must have the following format:
 ```
 where **brightresult** contains the outputs of brightness reasoning module, **cartoonresult** contains the outputs of sketch reasoning module, **originalimage** contains the original images, and **originalmask** contains the corresponding masks.
 
-## Citation
+## Citation      
 ```
-@article{PengWZ23,
+@article{ZhangYQ24,
 title = {PRN: Progressive Reasoning Network and Its Image Completion Applications},
-author = {Xianlin Peng, Huayu Zhao, Xiaoyu Wang, Yongqin Zhang, Zhan Li, Qunxi Zhang, Jun Wang, Jinye Peng, Haida Liang},
-journal = {Neural Computing and Applications},
-volume = {35},
-article id = {},
-pages = {1959-1970},
-year={2023}
+author = {Yongqin Zhang, Xiaoyu Wang, Panpan Zhu, Xuan Lu, Jinsheng Xiao, Wei Zhou, Zhan Li, and Xianlin Peng},
+journal = {Scientific Reports},
+year={2024}
 }
 ```
